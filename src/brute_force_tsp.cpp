@@ -3,16 +3,16 @@
 // the starting point
 
 #include <bits/stdc++.h>
-using namespace std;
+#include "brute_force_tsp.hpp"
 
-int tsp(vector<vector<int>> &cost) {
+int bf_tcp(std::vector<std::vector<int>> &cost) {
 
     // Number of nodes
     int numNodes = cost.size();
-    vector<int> nodes;
+    std::vector<int> nodes;
 
     // Initialize the nodes excluding the fixed 
-   // starting point (node 0)
+    // starting point (node 0)
     for (int i = 1; i < numNodes; i++)
         nodes.push_back(i);
 
@@ -35,23 +35,10 @@ int tsp(vector<vector<int>> &cost) {
         currCost += cost[currNode][0];
 
         // Update the minimum cost if the current cost 
-      // is lower
-        minCost = min(minCost, currCost);
+        // is lower
+        minCost = std::min(minCost, currCost);
 
     } while (next_permutation(nodes.begin(), nodes.end()));
 
     return minCost;
-}
-
-int main() {
-
-    vector<vector<int>> cost = {{0, 10, 15, 20}, 
-                                {10, 0, 35, 25}, 
-                                {15, 35, 0, 30}, 
-                                {20, 25, 30, 0}};
-
-    int res = tsp(cost);
-    cout << res << endl;
-
-    return 0;
 }
