@@ -5,7 +5,7 @@
 #include <bits/stdc++.h>
 #include "brute_force_tsp.hpp"
 
-int bf_tcp(std::vector<std::vector<int>> &cost) {
+int brute_force_tsp(std::vector<std::vector<int>> &cost) {
 
     // Number of nodes
     int numNodes = cost.size();
@@ -16,7 +16,7 @@ int bf_tcp(std::vector<std::vector<int>> &cost) {
     for (int i = 1; i < numNodes; i++)
         nodes.push_back(i);
 
-    int minCost = INT_MAX;
+    int minCost = SAFE_INT;
 
     // Generate all permutations of the remaining nodes
     do {
@@ -27,12 +27,23 @@ int bf_tcp(std::vector<std::vector<int>> &cost) {
 
         // Calculate the cost of the current permutation
         for (int i = 0; i < nodes.size(); i++) {
+            // Check for missing edge
+            if (cost[currNode][nodes[i]] >= SAFE_INT) {
+                currCost = SAFE_INT;
+                break;
+            }
             currCost += cost[currNode][nodes[i]];
             currNode = nodes[i];
         }
 
         // Add the cost to return to the starting node
-        currCost += cost[currNode][0];
+        if (currCost < SAFE_INT) {
+            if (cost[currNode][0] >= SAFE_INT) {
+                currCost = SAFE_INT;
+            } else {
+                currCost += cost[currNode][0];
+            }
+        }
 
         // Update the minimum cost if the current cost 
         // is lower

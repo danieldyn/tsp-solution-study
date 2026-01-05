@@ -19,22 +19,27 @@ int totalCost(int mask, int curr, std::vector<std::vector<int>>& cost, std::vect
         return dp[curr][mask];
     }
 
-    int ans = INT_MAX;
+    int ans = SAFE_INT;
 
     // Try visiting every city that has not been visited yet
     for (int i = 0; i < n; i++) {
         if ((mask & (1 << i)) == 0) {
-
-            // If city i is not visited 
-            // Visit city i and update the mask
-            ans = std::min(ans, cost[curr][i] + totalCost(mask | (1 << i), i, cost, dp));
+            // Only recurse if the edge to 'i' actually exists
+            if (cost[curr][i] < SAFE_INT) {
+                int remaining = totalCost(mask | (1 << i), i, cost, dp);
+                
+                // FIX: Only add if the remaining path is valid
+                if (remaining < SAFE_INT) {
+                    ans = std::min(ans, cost[curr][i] + remaining);
+                }
+            }
         }
     }
     
     return dp[curr][mask] = ans;
 }
 
-int hk_tcp(std::vector<std::vector<int>>& cost) {
+int held_karp_tcp(std::vector<std::vector<int>>& cost) {
     int n = cost.size();
     std::vector<std::vector<int>> dp(n, std::vector<int>(1 << n, -1));
     

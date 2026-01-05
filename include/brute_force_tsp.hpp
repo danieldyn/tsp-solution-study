@@ -2,8 +2,9 @@
 
 #define BRUTE_FORCE_TCP_HPP
 
-#include <vector>
+#define SAFE_INT 1000000000
 
-int bf_tcp(std::vector<std::vector<int>> &cost);
+#include <vector>
+int brute_force_tsp(std::vector<std::vector<int>> &cost);
 
 #endif
