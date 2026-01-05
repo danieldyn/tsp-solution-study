@@ -1,3 +1,50 @@
-benchmark
-build
+# System & Editor (Global)
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Build 
+build/
+benchmark/
+CMakeFiles/
+CMakeCache.txt
+*.cmake
+Makefile
+
+# Compiled Binaries
+# (In case you compile manually without the build folder)
+*.o
+*.a
+*.so
+*.dylib
+tsp_bench
+generate_refs
+generate_outs
+compare_results
+
+# Testing
+# We generally ignore the generated output, but keep the input
+tests/out/
+tests/ref/
+# Or if you want to commit references but not local outputs:
+# tests/out/
+# !tests/ref/
 check_results.txt
+
+# Report (LaTeX)
+report/*.aux
+report/*.log
+report/*.out
+report/*.toc
+report/*.bbl
+report/*.blg
+report/*.fls
+report/*.fdb_latexmk
+report/*.synctex.gz
+report/*.pdf
