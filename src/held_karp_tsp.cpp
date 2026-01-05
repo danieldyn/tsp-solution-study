@@ -39,7 +39,7 @@ int totalCost(int mask, int curr, std::vector<std::vector<int>>& cost, std::vect
     return dp[curr][mask] = ans;
 }
 
-int held_karp_tcp(std::vector<std::vector<int>>& cost) {
+int held_karp_tsp(std::vector<std::vector<int>>& cost) {
     int n = cost.size();
     std::vector<std::vector<int>> dp(n, std::vector<int>(1 << n, -1));
     

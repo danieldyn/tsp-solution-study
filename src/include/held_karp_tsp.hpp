@@ -5,6 +5,6 @@
 #define SAFE_INT 1000000000
 
 #include <vector>
-int held_karp_tcp(std::vector<std::vector<int>> &cost);
+int held_karp_tsp(std::vector<std::vector<int>> &cost);
 
 #endif

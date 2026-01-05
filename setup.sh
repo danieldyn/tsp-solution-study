@@ -1,21 +1,19 @@
-#! /bin/bash
+#!/bin/bash
 
-BENCHMARK_URL="https://github.com/google/benchmark.git"
-BENCHMARK_DIR_NAME="benchmark"
-CMAKE="cmake"
+echo "Setting up environment..."
 
-git clone --quiet --depth 1 $BENCHMARK_URL $BENCHMARK_DIR_NAME > /dev/null 2>&1
-cd $BENCHMARK_DIR_NAME
-
-if ! [ -x "$(command -v "$CMAKE")" ] ;then
-    echo "$CMAKE is installing ..."
-    sudo apt update && sudo apt install -y $CMAKE
-    if test $? -ne 0;then
-        echo "Installation failed!"
-        exit 1
-    fi
+# Make sure CMake is installed for the real actions
+echo "Making sure you have CMake installed..."
+if ! [ -x "$(command -v cmake)" ]; then
+    echo "CMake not found. Installing..."
+    sudo apt update && sudo apt install -y cmake
 fi
 
-"$CMAKE" -E make_directory "build"
-"$CMAKE" -E chdir "build" "$CMAKE" -DBENCHMARK_DOWNLOAD_DEPENDENCIES=on -DCMAKE_BUILD_TYPE=Release ../
-"$CMAKE" --build "build" --config Release
+echo "Creating the 'build' directory with Google Benchmark..."
+
+# Start the build directory from zero
+rm -rf build
+
+# Build Google Benchmark
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build --config Release

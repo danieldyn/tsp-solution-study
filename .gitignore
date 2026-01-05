@@ -1,6 +1,3 @@
 benchmark
-tsp_bench
-tests/generate_refs
-tests/generate_outs
-tests/compare_results
-tests/compare_results.txt
+build
+check_results.txt
