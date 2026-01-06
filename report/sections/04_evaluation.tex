@@ -1,0 +1,131 @@
+\section{Evaluare}
+\label{sec:evaluare}
+
+Acest capitol prezintă metodologia de testare, specificațiile hardware utilizate și analiza comparativă a performanței celor trei
+algoritmi implementați: Brute Force, Greedy (Nearest Neighbour) și Held-Karp.
+
+%% 1. Construirea Setului de Teste %%
+\subsection{Construirea Setului de Teste}
+\label{subsec:teste}
+% TODO: Cerința: Descrierea modalității de construire a setului de teste folosite pentru validare. [10%]
+
+%% 2. Specificațiile Sistemului de Calcul %%
+\subsection{Specificațiile Sistemului de Calcul}
+\label{subsec:specs}
+
+Am rulat toate experimentele pe sistemul cu Linux nativ dintre cele ale membrilor echipei, pentru a elimina overhead-ul cauzat de 
+mașini virtuale sau WSL. Configurația hardware și software utilizată pentru benchmarking este următoarea:
+
+\begin{itemize}
+    \item Sistem de Operare: EndeavourOS x86\_64 (Kernel Linux 6.12.63-1-lts)
+    \item Procesor (CPU): Intel Core Ultra 5 125U (14 nuclee, frecvență max. 4.30 GHz)
+    \item Memorie RAM: 32 GB (30.82 GiB utilizabil)
+    \item Compilator: g++ (GCC) 15.2.1 20251112, fără optimizare
+    \item Framework: Google Benchmark v1.8.3
+\end{itemize}
+
+%% 3. Ilustrarea Rezultatelor %%
+% FIXME: Re-inspect everything after compilation
+\subsection{Ilustrarea Rezultatelor}
+\label{subsec:ilustrare}
+
+Rezultatele experimentale (Tabelul \ref{tab:benchmark_summary}) confirmă în totalitate diferențele de clasă de complexitate dintre algoritmi. 
+
+\begin{table}[ht]
+    \centering
+    \caption{Timpii de execuție măsurați pe diverse teste.}
+    \label{tab:benchmark_summary}
+    \begin{tabular}{|l|c|r|r|r|}
+        \hline
+        \textbf{Test} & \textbf{Număr de noduri} & \textbf{Brute Force} & \textbf{Held-Karp} & \textbf{Greedy} \\
+        \hline
+        Test 08 & 4  & 44 ns       & 84 ns      & 18 ns \\
+        Test 01 & 8  & 22.5 $\mu$s & 3.9 $\mu$s & 56 ns \\
+        Test 09 & 10 & 2.22 ms     & 75 $\mu$s  & 85 ns \\
+        Test 12 & 12 & 248 ms      & 0.51 ms    & 120 ns \\
+        Test 11 & 13 & \textbf{1.63 s} & 0.64 ms & 130 ns \\
+        Test 18 & 14 & \textit{Timeout} & 3.11 ms & 162 ns \\
+        Test 19 & 17 & \textit{Timeout} & 35.6 ms  & 238 ns \\
+        Test 24 & 20 & \textit{Timeout} & \textbf{644 ms}   & 328 ns \\
+        \hline
+    \end{tabular}
+\end{table}
+
+Pe lângă timpul de execuție, un factor critic în evaluarea algoritmilor este calitatea soluției obținute. Tabelul \ref{tab:accuracy} 
+compară costul drumului găsit de euristica Greedy cu costul optim calculat de Held-Karp.
+
+\begin{table}[ht]
+    \centering
+    \caption{Comparație a costurilor și erorilor relative.} 
+    \label{tab:accuracy}
+    \begin{tabular}{|l|r|r|r|l|}
+        \hline
+        \textbf{Test} & \textbf{Cost Optim} & \textbf{Cost Greedy} & \textbf{Eroare (\%)} & \textbf{Concluzie} \\
+        \hline
+        Test 08 & 1,248,907 & 1,248,907 & \textbf{0.00\%} & Optim găsit \\
+        Test 02 & 3,077,161 & 3,123,942 & 1.52\% & Bun \\
+        Test 04 & 1,501,515 & 1,665,081 & 10.89\% & Mediu \\
+        Test 22 & 1,645,079 & 2,456,555 & 49.33\% & Slab \\
+        Test 01 & 1,273,944 & 2,280,130 & \textbf{78.98\%} & Foarte Slab \\
+        \hline
+        Test 05 & 3,411,545 & $\infty$ (INF) & N/A & \textbf{Greedy Eșuat} \\
+        Test 11 & 5,050,651 & $\infty$ (INF) & N/A & \textbf{Greedy Eșuat} \\
+        Test 24 & 2,721,940 & $\infty$ (INF) & N/A & \textbf{Greedy Eșuat} \\
+        \hline
+        Test 06 & $\infty$ (INF) & $\infty$ (INF) & N/A & Graf Deconectat \\
+        \hline
+    \end{tabular}
+\end{table}
+
+Analiza datelor evidențiază trei comportamente distincte ale algoritmului Greedy:
+
+\begin{itemize}
+    \item Succes Rar (Optim Global): În cazuri izolate (ex. Test 08), alegerea locală a coincis cu optimul global, rezultând o eroare de 0\%.    
+    \item Deviații Majore: În majoritatea cazurilor reușite, Greedy a produs soluții sub-optimale semnificative. 
+    De exemplu, în Testul 01, soluția Greedy a fost cu aproape \textbf{79\% mai scumpă} decât cea optimă.
+    Acest lucru demonstrează incapacitatea algoritmului de a "vedea" pierderea optimului global pe termen lung.
+    \item Eșec Structural (Greedy Failed): Un rezultat critic este numărul mare de teste unde Greedy a eșuat complet (7 teste). 
+    Deoarece algoritmul Nearest Neighbour nu are mecanism de backtracking, dacă ajunge într-un nod din care nu mai poate vizita restul 
+    orașelor (într-un graf rar sau cu constrângeri), execuția se blochează. Held-Karp, explorând toate posibilitățile, a găsit soluții 
+    valide pentru aceste teste.
+\end{itemize}
+
+%% 4. Interpretarea Rezultatelor %%
+% FIXME: Re-inspect everything after compilation
+\subsection{Interpretarea Rezultatelor}
+\label{subsec:interpretare}
+
+\subsubsection{1. Rezultatele Algoritmului Brute Force}
+
+Așa cum am precizat la descrierea algoritmului Brute Force, complexitatea acestuia este de ordinul factorialului numărului de noduri ale 
+grafului ($N$). Creșterea timpului de execuție este bruscă odată, iar odată ce trecem de o valoare de prag a lui $N$, algoritmul și-a 
+atins limitele practice. De exemplu:
+
+\begin{itemize}
+    \item La $N=10$, timpul este acceptabil: $2.2$ ms.
+    \item La $N=12$, timpul crește de 100 de ori, ajungând la $248$ ms.
+    \item La $N=13$, algoritmul durează $1.63$ secunde.
+\end{itemize}
+
+Pentru $N \ge 14$, timpul a depășit zeci de secunde, chiar minute, motiv pentru care am modificat codul de benchmarking pentru a arunca 
+direct o eroare de runtime și a evita încărcarea procesorului.
+
+\subsubsection{2. Rezultatele Algoritmului Held-Karp}
+
+Algoritmul de programare dinamică a putut, pe de o parte, să gestioneze volumul mare al datelor de intrare (inclusiv pentru numărul de 
+noduri $N=20$), iar pe de altă parte să determine răspunsul probelmei într-un timp de execuție acceptabil:
+
+\begin{itemize}
+    \item Pentru $N=13$, Held-Karp a rulat în $0.63$ ms — o accelerare de \textbf{2500x} față de Brute Force.
+    \item Pentru instanțe mult mai mari, cum ar fi $N=20$, timpul nu trece de o secundă.
+\end{itemize}
+
+Totuși, componenta exponențială ($O(N^2 \cdot 2^N)$) se face simțită în testele finale: dublarea lui $N$ de la 10 la 20 a dus la o 
+creștere a timpului de la $34 \mu$s la $644$ ms.
+
+\subsubsection{3. Rezultatele Algoritmului Greedy}
+
+Algoritmul Greedy a avut un timp de execuție neglijabil pe tot parcursul testării. Chiar și pentru cel mai mare test ($N=20$), 
+durata a fost de $327$ nanosecunde. Deși viteza este considerabilă, costul total determinat de marea majoritate a soluțiilor Greedy
+este cu mult peste cel al răspunsului corect (determinat de algoritmul Held-Karp). Totuși, un test Greedy a obținut soluția reală o 
+dată, iar în alt caz s-a apropiat de aceasta la un procent de eroare de doar 1.52\%.

@@ -15,7 +15,6 @@ benchmark/
 CMakeFiles/
 CMakeCache.txt
 *.cmake
-Makefile
 
 # Compiled Binaries
 # (In case you compile manually without the build folder)
@@ -36,6 +35,7 @@ tests/ref/
 # tests/out/
 # !tests/ref/
 check_results.txt
+*.json
 
 # Report (LaTeX)
 report/*.aux

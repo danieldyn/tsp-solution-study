@@ -15,8 +15,17 @@ From the repository's root:
 
 From the repository's root:
 
+- If you want the results printed to the terminal in human readable format:
+
 ```bash
     chmod +x run_benchmark.sh
+    ./run_benchmark.sh
+```
+
+- If you want to store them inside the root of the project in the `results.json` file:
+
+```bash
+    chmod +x run_benchmark.sh json
     ./run_benchmark.sh
 ```
 
