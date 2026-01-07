@@ -1,1 +1,28 @@
-hello from NP Hard demonstration
+\section{Demonstrația Caracterului NP-Hard}
+\label{sec:np_hard}
+
+Problema Comis-Voiajorului aparține clasei problemelor \textbf{NP-hard}. Aceasta înseamnă că nu se cunoaște un algoritm care să rezolve orice instanță de TSP în timp polinomial, iar existența unui astfel de algoritm ar implica faptul că $P = NP$.
+
+\subsection{Reducerea de la Ciclul Hamiltonian}
+
+Pentru a demonstra că TSP este NP-hard, utilizăm tehnica reducerii polinomiale de la problema Ciclului Hamiltonian (CH), care este deja cunoscută ca fiind NP-completă. 
+
+Fie un graf neponderat $G = (V, E)$ pentru care dorim să aflăm dacă există un ciclu Hamiltonian. Construim un graf complet ponderat $G' = (V, E')$ pentru TSP astfel:
+\begin{itemize}
+    \item Pentru fiecare muchie $(u, v) \in E$, setăm costul $w(u, v) = 1$.
+    \item Pentru fiecare pereche de noduri $(u, v) \notin E$, setăm un cost foarte mare, $w(u, v) = k$, unde $k > |V|$.
+\end{itemize}
+
+\textbf{Argumentație:}
+Dacă în graful original $G$ există un ciclu Hamiltonian, atunci în graful de TSP construit $G'$, costul minim al unui tur va fi exact $|V|$. Dacă nu există un ciclu Hamiltonian în $G$, orice tur în $G'$ va trebui să includă cel puțin o muchie de cost $k$, deci costul total va fi strict mai mare decât $|V|$.
+
+Astfel, dacă am avea un algoritm de timp polinomial pentru a găsi costul minim în TSP, am putea decide automat existența Ciclului Hamiltonian în $G$, ceea ce demonstrează că TSP este cel puțin la fel de grea ca orice problemă din clasa NP.
+
+\subsection{Consecințe asupra Algoritmilor}
+
+Această clasificare justifică utilizarea a trei abordări diferite în acest raport:
+\begin{enumerate}
+    \item \textbf{Brute Force:} Căutare exhaustivă ($O(n!)$), garantat optimă, dar practică doar pentru $n \le 13$.
+    \item \textbf{Held-Karp:} Programare dinamică ($O(n^2 2^n)$), care îmbunătățește exponențial timpul de execuție, dar rămâne limitată de memorie.
+    \item \textbf{Greedy:} Euristică de timp polinomial ($O(n^2)$), care oferă rapid o soluție, dar fără garanția optimului sau chiar a succesului în grafuri rare.
+\end{enumerate}

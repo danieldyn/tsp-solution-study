@@ -1,1 +1,12 @@
-hello from introduction
+\section{Introducere}
+\label{sec:intro}
+
+Problema Comis-Voiajorului (\textit{Traveling Salesman Problem} - TSP) reprezintă una dintre cele mai studiate probleme de optimizare combinatorie, servind drept punct de referință în informatica teoretică și cercetarea operațională. Enunțul este deceptiv de simplu: fiind dată o listă de orașe și distanțele dintre oricare două dintre acestea, care este cel mai scurt traseu posibil care vizitează fiecare oraș exact o dată și revine la orașul de origine?
+
+Formal, problema este definită pe un graf complet ponderat $G = (V, E, w)$, unde $V$ este mulțimea nodurilor (orașe), $E$ mulțimea muchiilor, iar $w: E \to \mathbb{R}^+$ este funcția de cost. Scopul este găsirea unei permutări $\sigma$ a nodurilor care minimizează suma:
+
+\begin{equation}
+    Cost = \sum_{i=1}^{n-1} w(v_{\sigma(i)}, v_{\sigma(i+1)}) + w(v_{\sigma(n)}, v_{\sigma(1)})
+\end{equation}
+
+Importanța studiului TSP rezidă nu doar în aplicațiile sale directe în logistică și transporturi, ci și în complexitatea sa computațională, fiind un pilon în demonstrarea limitărilor algoritmilor clasici în fața problemelor de dimensiuni mari.

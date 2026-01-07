@@ -1,1 +1,33 @@
-hello from algorithm presentation
+\section{Descrierea Algoritmilor Implementați}
+\label{sec:algoritmi}
+
+În această secțiune detaliem implementarea celor trei algoritmi utilizați în cadrul studiului comparativ, evidențiind modul în care aceștia gestionează cazurile particulare (grafuri rare) și constrângerile de memorie.
+
+\subsection{Brute Force (Căutare Exhaustivă)}
+Implementarea utilizează funcția \texttt{std::next\_permutation} din biblioteca standard C++ pentru a genera sistematic toate rutele posibile.
+
+\begin{itemize}
+    \item \textbf{Mod de lucru:} Algoritmul fixează nodul $0$ ca punct de start și generează toate permutările celorlalte $n-1$ noduri.
+    \item \textbf{Gestiunea erorilor:} Pentru a preveni erorile de tip \textit{overflow}, am utilizat o constantă \texttt{SAFE\_INT}. Dacă o muchie lipsește sau drumul este invalid, costul este setat la această valoare, iar suma nu este incrementată peste limită.
+    \item \textbf{Complexitate:} $O(n!)$, fiind limitat de numărul total de permutări.
+\end{itemize}
+
+\subsection{Held-Karp (Programare Dinamică și Bitmasking)}
+Algoritmul Held-Karp reprezintă o optimizare semnificativă, reducând spațiul de căutare prin memorarea rezultatelor parțiale.
+
+\begin{itemize}
+    \item \textbf{Structuri de date:} Am utilizat un tabel DP de tip \texttt{std::vector<std::vector<int>>} de dimensiune $n \times 2^n$. 
+    \item \textbf{Bitmasking:} Starea subproblemelor este reprezentată printr-un întreg (\texttt{mask}), unde al $i$-lea bit este $1$ dacă orașul $i$ a fost vizitat și $0$ în caz contrar.
+    \item \textbf{Recursivitate:} Funcția \texttt{totalCost} calculează recursiv drumul minim, verificând la fiecare pas dacă drumul rămas este valid (\texttt{remaining < SAFE\_INT}) înainte de a actualiza optimul local.
+\end{itemize}
+
+
+
+\subsection{Greedy (Nearest Neighbour)}
+Este cel mai rapid algoritm implementat, având o abordare constructivă, bazată pe alegeri locale.
+
+\begin{itemize}
+    \item \textbf{Logică:} La fiecare pas, algoritmul caută în matricea de adiacență cel mai apropiat vecin nevizitat al orașului curent.
+    \item \textbf{Eșec Structural (Dead End):} Codul implementat tratează explicit cazul în care nu există muchii către orașe nevizitate. În această situație, algoritmul returnează \texttt{SAFE\_INT}, semnalând imposibilitatea finalizării turului (fapt confirmat de rezultatele din Tabelul \ref{tab:accuracy}).
+    \item \textbf{Complexitate:} $O(n^2)$, datorită celor două bucle imbricate necesare pentru vizitarea a $n$ orașe și căutarea vecinului minim.
+\end{itemize}
