@@ -1,43 +1,44 @@
-\section{Evaluare}
-\label{sec:evaluare}
+\section{Evaluation}
+\label{sec:evaluation}
 
-Acest capitol prezintă metodologia de testare, specificațiile hardware utilizate și analiza comparativă a performanței celor trei
-algoritmi implementați: Brute Force, Greedy (Nearest Neighbour) și Held-Karp.
+This chapter presents the testing methodology, the hardware specifications used, and the comparative performance analysis of the three 
+implemented algorithms: Brute Force, Greedy (Nearest Neighbor), and Held-Karp.
 
-%% 1. Construirea Setului de Teste %%
-\subsection{Construirea Setului de Teste}
-\label{subsec:teste}
-% TODO: Cerința: Descrierea modalității de construire a setului de teste folosite pentru validare. [10%]
+%% 1. Construction of the Test Set %%
+\subsection{Construction of the Test Set}
+\label{subsec:tests}
+% TODO: Description of the methodology for constructing the test set used for validation.
 
-%% 2. Specificațiile Sistemului de Calcul %%
-\subsection{Specificațiile Sistemului de Calcul}
+%% 2. Computing System Specifications %%
+\subsection{Computing System Specifications}
 \label{subsec:specs}
 
-Am rulat toate experimentele pe sistemul cu Linux nativ dintre cele ale membrilor echipei, pentru a elimina overhead-ul cauzat de 
-mașini virtuale sau WSL. Configurația hardware și software utilizată pentru benchmarking este următoarea:
+We ran all experiments on a native Linux system belonging to one of the team members to eliminate overhead caused by virtual machines or WSL. 
+The hardware and software configuration used for benchmarking is as follows:
 
 \begin{itemize}
-    \item Sistem de Operare: EndeavourOS x86\_64 (Kernel Linux 6.12.63-1-lts)
-    \item Procesor (CPU): Intel Core Ultra 5 125U (14 nuclee, frecvență max. 4.30 GHz)
-    \item Memorie RAM: 32 GB (30.82 GiB utilizabil)
-    \item Compilator: g++ (GCC) 15.2.1 20251112, fără optimizare
-    \item Framework: Google Benchmark v1.8.3
+    \item Operating System: EndeavourOS x86\_64 (Linux Kernel 6.12.63-1-lts)
+    \item Processor: Intel Core Ultra 5 125U (14 cores, max frequency 4.30 GHz)
+    \item RAM: 32 GB (30.82 GiB usable)
+    \item Compiler: g++ (GCC) 15.2.1 20251112, no optimization
+    \item Framework: Google Benchmark \cite{googlebenchmark} v1.8.3
 \end{itemize}
 
-%% 3. Ilustrarea Rezultatelor %%
-% FIXME: Re-inspect everything after compilation
-\subsection{Ilustrarea Rezultatelor}
-\label{subsec:ilustrare}
+%% 3. Illustration of Results %%
+% FIXME: Page Layout with all the tables
+\subsection{Illustration of Results}
+\label{subsec:illustration}
 
-Rezultatele experimentale (Tabelul \ref{tab:benchmark_summary}) confirmă în totalitate diferențele de clasă de complexitate dintre algoritmi. 
+The experimental results (Table \ref{tab:benchmark_summary}) confirm the differences in complexity classes among the algorithms: one that 
+quickly reaches impractical runtime, another that exhibits significant growth with complex input data, and one that remains predictable.
 
-\begin{table}[ht]
+\begin{table}[H]
     \centering
-    \caption{Timpii de execuție măsurați pe diverse teste.}
+    \caption{Execution times measured on various tests.}
     \label{tab:benchmark_summary}
     \begin{tabular}{|l|c|r|r|r|}
         \hline
-        \textbf{Test} & \textbf{Număr de noduri} & \textbf{Brute Force} & \textbf{Held-Karp} & \textbf{Greedy} \\
+        \textbf{Test} & \textbf{Node Count} & \textbf{Brute Force} & \textbf{Held-Karp} & \textbf{Greedy} \\
         \hline
         Test 08 & 4  & 44 ns       & 84 ns      & 18 ns \\
         Test 01 & 8  & 22.5 $\mu$s & 3.9 $\mu$s & 56 ns \\
@@ -51,81 +52,128 @@ Rezultatele experimentale (Tabelul \ref{tab:benchmark_summary}) confirmă în to
     \end{tabular}
 \end{table}
 
-Pe lângă timpul de execuție, un factor critic în evaluarea algoritmilor este calitatea soluției obținute. Tabelul \ref{tab:accuracy} 
-compară costul drumului găsit de euristica Greedy cu costul optim calculat de Held-Karp.
+In addition to execution time, a factor we considered in evaluating the algorithms is the correctness of the obtained solution. Table 
+\ref{tab:accuracy} compares the path cost found by the Greedy heuristic with the optimal cost calculated by Held-Karp. We noticed how far 
+the Greedy algorithm can deviate from the real solution, often exceeding the \textit{SAFEINT} constant used in our study to signal a run failure. 
+We distinguish three situations that can occur:
 
-\begin{table}[ht]
+\begin{itemize}
+    \item Rare Success: In isolated cases (e.g., Test 08), the local choice coincides with the global optimum \textbf{at every step}, resulting in a 0\% error.
+    \item Cascading Deviations: In most successful cases, Greedy produced solutions with a visibly higher cost than the optimal one. 
+    This is due to a choice that respects the heuristic but, overall, disqualifies a part of the optimal solution from being considered. 
+    A "snowball effect" can occur, amplifying the discrepancies.
+    \item General Failure: Since the Nearest Neighbor algorithm has no backtracking mechanism, if it reaches a node from which it can no 
+    longer visit the remaining cities (such as in a sparse graph or one with constraints), execution blocks.
+\end{itemize}
+
+\begin{table}[H]
     \centering
-    \caption{Comparație a costurilor și erorilor relative.} 
+    \caption{Comparison of costs and relative errors.} 
     \label{tab:accuracy}
     \begin{tabular}{|l|r|r|r|l|}
         \hline
-        \textbf{Test} & \textbf{Cost Optim} & \textbf{Cost Greedy} & \textbf{Eroare (\%)} & \textbf{Concluzie} \\
+        \textbf{Test} & \textbf{Optimal Cost} & \textbf{Greedy Cost} & \textbf{Error (\%)} & \textbf{Conclusion} \\
         \hline
-        Test 08 & 1,248,907 & 1,248,907 & \textbf{0.00\%} & Optim găsit \\
-        Test 02 & 3,077,161 & 3,123,942 & 1.52\% & Bun \\
-        Test 04 & 1,501,515 & 1,665,081 & 10.89\% & Mediu \\
-        Test 22 & 1,645,079 & 2,456,555 & 49.33\% & Slab \\
-        Test 01 & 1,273,944 & 2,280,130 & \textbf{78.98\%} & Foarte Slab \\
+        Test 08 & 1,248,907 & 1,248,907 & \textbf{0.00\%} & Solution Found \\
+        Test 02 & 3,077,161 & 3,123,942 & 1.52\% & Good \\
+        Test 04 & 1,501,515 & 1,665,081 & 10.89\% & Average \\
+        Test 22 & 1,645,079 & 2,456,555 & 49.33\% & Poor \\
+        Test 01 & 1,273,944 & 2,280,130 & \textbf{78.98\%} & Very Poor \\
         \hline
-        Test 05 & 3,411,545 & $\infty$ (INF) & N/A & \textbf{Greedy Eșuat} \\
-        Test 11 & 5,050,651 & $\infty$ (INF) & N/A & \textbf{Greedy Eșuat} \\
-        Test 24 & 2,721,940 & $\infty$ (INF) & N/A & \textbf{Greedy Eșuat} \\
+        Test 05 & 3,411,545 & $\infty$ (INF) & N/A & \textbf{Greedy Failed} \\
+        Test 11 & 5,050,651 & $\infty$ (INF) & N/A & \textbf{Greedy Failed} \\
+        Test 24 & 2,721,940 & $\infty$ (INF) & N/A & \textbf{Greedy Failed} \\
         \hline
-        Test 06 & $\infty$ (INF) & $\infty$ (INF) & N/A & Graf Deconectat \\
+        Test 06 & $\infty$ (INF) & $\infty$ (INF) & N/A & Disconnected Graph \\
         \hline
     \end{tabular}
 \end{table}
 
-Analiza datelor evidențiază trei comportamente distincte ale algoritmului Greedy:
+From the interpretations above, we can distinguish several reasons why the discussed implementations might fail, for various situations:
 
-\begin{itemize}
-    \item Succes Rar (Optim Global): În cazuri izolate (ex. Test 08), alegerea locală a coincis cu optimul global, rezultând o eroare de 0\%.    
-    \item Deviații Majore: În majoritatea cazurilor reușite, Greedy a produs soluții sub-optimale semnificative. 
-    De exemplu, în Testul 01, soluția Greedy a fost cu aproape \textbf{79\% mai scumpă} decât cea optimă.
-    Acest lucru demonstrează incapacitatea algoritmului de a "vedea" pierderea optimului global pe termen lung.
-    \item Eșec Structural (Greedy Failed): Un rezultat critic este numărul mare de teste unde Greedy a eșuat complet (7 teste). 
-    Deoarece algoritmul Nearest Neighbour nu are mecanism de backtracking, dacă ajunge într-un nod din care nu mai poate vizita restul 
-    orașelor (într-un graf rar sau cu constrângeri), execuția se blochează. Held-Karp, explorând toate posibilitățile, a găsit soluții 
-    valide pentru aceste teste.
-\end{itemize}
+\begin{table}[H]
+    \centering
+    \caption{Failure Mode Analysis}
+    \label{tab:failures}
+    \begin{tabular}{|l|l|l|l|}
+        \hline
+        \textbf{Algorithm} & \textbf{Limit Reached} & \textbf{Cause} & \textbf{Impact} \\
+        \hline
+        Brute Force & $N \ge 13$ & Complexity $O(N!)$ & Timeout (Time) \\
+        Held-Karp   & $N > 22$ (est.) & Memory $O(N 2^N)$ & Out of Memory \\
+        Greedy      & Random & Graph Topology & \textbf{Solution Failure (Deadlock)} \\
+        \hline
+    \end{tabular}
+\end{table}
 
-%% 4. Interpretarea Rezultatelor %%
-% FIXME: Re-inspect everything after compilation
-\subsection{Interpretarea Rezultatelor}
+\subsubsection{Graphical Analysis}
+% FIXME: Page layout with all images
+
+The following figures illustrate comparative performance. In Fig.~\ref{fig:runtime_all}, the logarithmic scale highlights the class 
+difference between algorithms. Brute Force becomes vertical at $N=13$, when we expect it to start exceeding reasonable runtime. In contrast, 
+Greedy stays at the base of the graph.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{plot_runtime_all.png}
+    \caption{Runtime Comparison (Logarithmic Scale)}
+    \label{fig:runtime_all}
+\end{figure}
+
+Although Held-Karp is much more efficient than Brute Force, Fig.~\ref{fig:hk_zoom} shows that it also follows an exponential curve, with costs 
+rising rapidly after $N=17$.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{plot_heldkarp_zoom.png}
+    \caption{Held-Karp Performance Detail ($N=10$ to $N=20$).}
+    \label{fig:hk_zoom}
+\end{figure}
+
+Finally, Fig.~\ref{fig:greedy_error} highlights the trade-off made by Greedy: maximum speed at the price of an error that reached as high 
+as 80\% in our tests.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{plot_greedy_error.png}
+    \caption{Distribution of relative errors for valid Greedy solutions.}
+    \label{fig:greedy_error}
+\end{figure}
+
+%% 4. Interpretation of Results %%
+\subsection{Interpretation of Results}
 \label{subsec:interpretare}
 
-\subsubsection{1. Rezultatele Algoritmului Brute Force}
+\subsubsection{Brute Force Algorithm Results}
 
-Așa cum am precizat la descrierea algoritmului Brute Force, complexitatea acestuia este de ordinul factorialului numărului de noduri ale 
-grafului ($N$). Creșterea timpului de execuție este bruscă odată, iar odată ce trecem de o valoare de prag a lui $N$, algoritmul și-a 
-atins limitele practice. De exemplu:
-
-\begin{itemize}
-    \item La $N=10$, timpul este acceptabil: $2.2$ ms.
-    \item La $N=12$, timpul crește de 100 de ori, ajungând la $248$ ms.
-    \item La $N=13$, algoritmul durează $1.63$ secunde.
-\end{itemize}
-
-Pentru $N \ge 14$, timpul a depășit zeci de secunde, chiar minute, motiv pentru care am modificat codul de benchmarking pentru a arunca 
-direct o eroare de runtime și a evita încărcarea procesorului.
-
-\subsubsection{2. Rezultatele Algoritmului Held-Karp}
-
-Algoritmul de programare dinamică a putut, pe de o parte, să gestioneze volumul mare al datelor de intrare (inclusiv pentru numărul de 
-noduri $N=20$), iar pe de altă parte să determine răspunsul probelmei într-un timp de execuție acceptabil:
+As stated in the description of the Brute Force algorithm, its complexity is on the order of the factorial of the graph's node count ($N$). 
+The increase in execution time is abrupt, and once we pass a threshold value of $N$, the algorithm reaches its practical limits. 
+For example:
 
 \begin{itemize}
-    \item Pentru $N=13$, Held-Karp a rulat în $0.63$ ms — o accelerare de \textbf{2500x} față de Brute Force.
-    \item Pentru instanțe mult mai mari, cum ar fi $N=20$, timpul nu trece de o secundă.
+    \item At $N=10$, the time is acceptable: $2.2$ ms.
+    \item At $N=12$, the time increases 100-fold, reaching $248$ ms.
+    \item At $N=13$, the algorithm takes $1.63$ seconds.
 \end{itemize}
 
-Totuși, componenta exponențială ($O(N^2 \cdot 2^N)$) se face simțită în testele finale: dublarea lui $N$ de la 10 la 20 a dus la o 
-creștere a timpului de la $34 \mu$s la $644$ ms.
+For $N \ge 14$, the time exceeded tens of seconds, even minutes, which is why we modified the benchmarking code to directly throw a runtime 
+error and avoid overloading the processor.
 
-\subsubsection{3. Rezultatele Algoritmului Greedy}
+\subsubsection{Held-Karp Algorithm Results}
 
-Algoritmul Greedy a avut un timp de execuție neglijabil pe tot parcursul testării. Chiar și pentru cel mai mare test ($N=20$), 
-durata a fost de $327$ nanosecunde. Deși viteza este considerabilă, costul total determinat de marea majoritate a soluțiilor Greedy
-este cu mult peste cel al răspunsului corect (determinat de algoritmul Held-Karp). Totuși, un test Greedy a obținut soluția reală o 
-dată, iar în alt caz s-a apropiat de aceasta la un procent de eroare de doar 1.52\%.
+The dynamic programming algorithm was able, on one hand, to manage the large volume of input data (including for node count $N=20$), and on 
+the other hand, to determine the problem's answer within an acceptable execution time:
+
+\begin{itemize}
+    \item For $N=13$, Held-Karp ran in $0.63$ ms — an acceleration of \textbf{2500x} compared to Brute Force.
+    \item For much larger instances, such as $N=20$, the time does not exceed one second.
+\end{itemize}
+
+However, the exponential component ($O(N^2 \cdot 2^N)$) makes its presence felt in the final tests: doubling $N$ from 10 to 20 led to an 
+increase in time from $34 \mu$s to $644$ ms.
+
+\subsubsection{Greedy Algorithm Results}
+
+The Greedy algorithm had negligible execution time throughout testing. Even for the largest test ($N=20$), the duration was $327$ nanoseconds. 
+Although the speed is considerable, the total cost determined by the vast majority of Greedy solutions is far above that of the correct answer 
+(determined by the Held-Karp algorithm). However, one Greedy test obtained the real solution once, and in another case had an error percentage of only 1.52\%.

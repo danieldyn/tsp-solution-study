@@ -1,12 +1,18 @@
-\section{Introducere}
+\section{Introduction}
 \label{sec:intro}
 
-Problema Comis-Voiajorului (\textit{Traveling Salesman Problem} - TSP) reprezintă una dintre cele mai studiate probleme de optimizare combinatorie, servind drept punct de referință în informatica teoretică și cercetarea operațională. Enunțul este deceptiv de simplu: fiind dată o listă de orașe și distanțele dintre oricare două dintre acestea, care este cel mai scurt traseu posibil care vizitează fiecare oraș exact o dată și revine la orașul de origine?
+The Traveling Salesman Problem (TSP) represents one of the most studied problems in combinatorial optimization, serving as a 
+benchmark in theoretical computer science and operations research. The problem statement is deceptively simple: given a list 
+of cities and the distances between any pair of cities, what is the shortest possible route that visits each city exactly once 
+and returns to the origin city?
 
-Formal, problema este definită pe un graf complet ponderat $G = (V, E, w)$, unde $V$ este mulțimea nodurilor (orașe), $E$ mulțimea muchiilor, iar $w: E \to \mathbb{R}^+$ este funcția de cost. Scopul este găsirea unei permutări $\sigma$ a nodurilor care minimizează suma:
+Formally, the problem is defined on a weighted complete graph $G = (V, E, w)$, where $V$ is the set of nodes (cities), $E$ is the 
+set of edges, and $w: E \to \mathbb{R}^+$ is the cost function. The objective is to find a permutation $\sigma$ of the nodes that 
+minimizes the sum:
 
 \begin{equation}
     Cost = \sum_{i=1}^{n-1} w(v_{\sigma(i)}, v_{\sigma(i+1)}) + w(v_{\sigma(n)}, v_{\sigma(1)})
 \end{equation}
 
-Importanța studiului TSP rezidă nu doar în aplicațiile sale directe în logistică și transporturi, ci și în complexitatea sa computațională, fiind un pilon în demonstrarea limitărilor algoritmilor clasici în fața problemelor de dimensiuni mari.
+The importance of studying TSP lies not only in its direct applications in logistics and transportation but also in its computational 
+complexity, acting as a cornerstone in demonstrating the limitations of classical algorithms when facing large-scale problems.

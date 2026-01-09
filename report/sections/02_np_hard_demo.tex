@@ -1,28 +1,36 @@
-\section{Demonstrația Caracterului NP-Hard}
+\section{Proof of NP-Hardness}
 \label{sec:np_hard}
 
-Problema Comis-Voiajorului aparține clasei problemelor \textbf{NP-hard}. Aceasta înseamnă că nu se cunoaște un algoritm care să rezolve orice instanță de TSP în timp polinomial, iar existența unui astfel de algoritm ar implica faptul că $P = NP$.
+The Traveling Salesman Problem belongs to the class of \textbf{NP-hard} problems. This means that no algorithm is known to solve every 
+instance of TSP in polynomial time, and the existence of such an algorithm would imply that $P = NP$.
 
-\subsection{Reducerea de la Ciclul Hamiltonian}
+\subsection{Reduction from Hamiltonian Cycle}
 
-Pentru a demonstra că TSP este NP-hard, utilizăm tehnica reducerii polinomiale de la problema Ciclului Hamiltonian (CH), care este deja cunoscută ca fiind NP-completă. 
+To demonstrate that TSP is NP-hard, we use the polynomial reduction technique from the Hamiltonian Cycle (HC) problem, which is already 
+known to be NP-complete.
 
-Fie un graf neponderat $G = (V, E)$ pentru care dorim să aflăm dacă există un ciclu Hamiltonian. Construim un graf complet ponderat $G' = (V, E')$ pentru TSP astfel:
+Let $G = (V, E)$ be an unweighted graph for which we wish to determine if a Hamiltonian cycle exists. We construct a complete weighted 
+graph $G' = (V, E')$ for TSP as follows:
+
 \begin{itemize}
-    \item Pentru fiecare muchie $(u, v) \in E$, setăm costul $w(u, v) = 1$.
-    \item Pentru fiecare pereche de noduri $(u, v) \notin E$, setăm un cost foarte mare, $w(u, v) = k$, unde $k > |V|$.
+    \item For each edge $(u, v) \in E$, we set the cost $w(u, v) = 1$.
+    \item For each pair of nodes $(u, v) \notin E$, we set a very large cost, $w(u, v) = k$, where $k > |V|$.
 \end{itemize}
 
-\textbf{Argumentație:}
-Dacă în graful original $G$ există un ciclu Hamiltonian, atunci în graful de TSP construit $G'$, costul minim al unui tur va fi exact $|V|$. Dacă nu există un ciclu Hamiltonian în $G$, orice tur în $G'$ va trebui să includă cel puțin o muchie de cost $k$, deci costul total va fi strict mai mare decât $|V|$.
+Argument: If a Hamiltonian cycle exists in the original graph $G$, then in the constructed TSP graph $G'$, the minimum cost of a tour 
+will be exactly $|V|$. If no Hamiltonian cycle exists in $G$, any tour in $G'$ must include at least one edge of cost $k$, so the total 
+cost will be strictly greater than $|V|$.
 
-Astfel, dacă am avea un algoritm de timp polinomial pentru a găsi costul minim în TSP, am putea decide automat existența Ciclului Hamiltonian în $G$, ceea ce demonstrează că TSP este cel puțin la fel de grea ca orice problemă din clasa NP.
+Thus, if we had a polynomial-time algorithm to find the minimum cost in TSP, we could automatically decide the existence of a 
+Hamiltonian Cycle in $G$, which demonstrates that TSP is at least as hard as any problem in the NP class.
 
-\subsection{Consecințe asupra Algoritmilor}
+\subsection{Consequences on Algorithms}
 
-Această clasificare justifică utilizarea a trei abordări diferite în acest raport:
+This classification justifies the use of three different approaches in this report:
+
 \begin{enumerate}
-    \item \textbf{Brute Force:} Căutare exhaustivă ($O(n!)$), garantat optimă, dar practică doar pentru $n \le 13$.
-    \item \textbf{Held-Karp:} Programare dinamică ($O(n^2 2^n)$), care îmbunătățește exponențial timpul de execuție, dar rămâne limitată de memorie.
-    \item \textbf{Greedy:} Euristică de timp polinomial ($O(n^2)$), care oferă rapid o soluție, dar fără garanția optimului sau chiar a succesului în grafuri rare.
+    \item \textbf{Brute Force:} Exhaustive search ($O(n!)$), guaranteed to be optimal but practical only for $n \le 13$.
+    \item \textbf{Held-Karp:} Dynamic programming ($O(n^2 \cdot 2^n)$), which exponentially improves execution time but remains memory-limited.
+    \item \textbf{Greedy:} Polynomial-time heuristic ($O(n^2)$), which provides a solution quickly but without the guarantee of optimality 
+    or even success in sparse graphs.
 \end{enumerate}

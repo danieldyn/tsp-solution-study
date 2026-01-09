@@ -25,8 +25,8 @@ From the repository's root:
 - If you want to store them inside the root of the project in the `results.json` file:
 
 ```bash
-    chmod +x run_benchmark.sh json
-    ./run_benchmark.sh
+    chmod +x run_benchmark.sh
+    ./run_benchmark.sh json
 ```
 
 ## Verifying Correctness

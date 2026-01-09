@@ -3,8 +3,8 @@
 
 % Language & Encoding
 \usepackage[T1]{fontenc}
-\usepackage[utf8]{inputenc} % For Romanian diacritics
-\usepackage[romanian]{babel}
+\usepackage[utf8]{inputenc} 
+\usepackage[english]{babel}
 
 % Math Symbols
 \usepackage{amsmath}
@@ -14,6 +14,7 @@
 % Graphics & Utils
 \usepackage{graphicx}
 \graphicspath{{img/}}
+\usepackage{float} % Helps with floating graphics and tables
 
 % Hyperlinks
 \usepackage{hyperref}
@@ -24,25 +25,31 @@
 \begin{document}
 
 % Metadata
-\title{Analiza Comparativă a Soluțiilor pentru Problema Comis-Voiajorului (TSP)}
+\title{Comparative Analysis of Solutions for the Traveling Salesman Problem (TSP)}
 
-\titlerunning{Analiza Algoritmilor TSP}
+% Appears in even pages' headers
+\titlerunning{Analysis of TSP Algorithms}
 
-\author{Numele Tău\inst{1} \and
-Membru Echipă 2\inst{1}}
+% Author Names (Same University)
+\author{Daniel-Ioan Dinu \inst{1} \and
+Maria-Ioana Ungurean \inst{1} \and
+Mihai Toderiță \inst{1}}
 
-\authorrunning{N. Tău et al.}
+% Appears in odd pages' headers
+\authorrunning{D. Dinu, M. Ungurean, M. Toderiță} 
 
-\institute{Universitatea Ta, Facultatea Ta, Oraș, România\\
-\email{email@student.university.ro}}
+% Institute & Emails
+\institute{National University of Science and Technology Politehnica Bucharest\\
+Faculty of Automatic Control and Computers\\
+\email{\{daniel\_ioan.dinu, maria.ungurean, mihai.toderita\}@stud.acs.upb.ro}}
 
 \maketitle
 
 % Abstract
 \begin{abstract}
-Acest raport prezintă o analiză comparativă a trei algoritmi pentru rezolvarea Problemei Comis-Voiajorului (TSP): Brute Force, Greedy (Nearest Neighbor) și Held-Karp. Studiul evaluează performanța în timp și acuratețea soluțiilor pe un set de 25 de teste sintetice.
+This report presents a comparative analysis of three algorithms for solving the Traveling Salesman Problem (TSP): Brute Force, Greedy (Nearest Neighbor), and Held-Karp. The study evaluates time performance and solution accuracy on a set of 25 synthetic tests.
 
-\keywords{Traveling Salesman Problem \and Algoritmi \and Benchmarking \and C++.}
+\keywords{Traveling Salesman Problem \and Algorithms \and Benchmarking.}
 \end{abstract}
 
 % Content Sections
