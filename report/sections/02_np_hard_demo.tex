@@ -1,36 +1,56 @@
-\section{Proof of NP-Hardness}
+\section{NP-Hardness Proof}
 \label{sec:np_hard}
 
-The Traveling Salesman Problem belongs to the class of \textbf{NP-hard} problems. This means that no algorithm is known to solve every 
-instance of TSP in polynomial time, and the existence of such an algorithm would imply that $P = NP$.
+In this section we prove that the Traveling Salesman Problem (TSP), as stated in our assignment, is computationally intractable in the worst case unless $P = NP$. More precisely, we show that TSP is NP-Hard by proving that its decision version is NP-Complete. This result justifies the need for heuristic or approximation algorithms in practice, especially for instances with a large number of vertices.
+
+We start by introducing the decision variant of the problem, commonly used in complexity theory. While the assignment asks for the minimum-length tour (an optimization objective), the NP-Hardness proof is established by reducing a known NP-Complete decision problem to a decision formulation of TSP.
+
+\subsection{Decision Traveling Salesman Problem (TSP-DEC)}
+
+\textbf{Decision Traveling Salesman Problem (TSP-DEC).} Given an undirected weighted graph $G = (V, E)$, a cost function $c : E \to \mathbb{N}$, and an integer threshold $K$, determine whether there exists a closed tour that visits each vertex exactly once and returns to the starting vertex, such that the total cost of the tour is at most $K$. If no such tour exists, the instance is considered a NO instance.
+
+It is important to note that the input graphs considered in the assignment are not necessarily complete, since the number of edges $M$ may be smaller than $N(N-1)/2$. In such cases, a Hamiltonian tour might not exist at all. The decision version naturally captures this behavior: a missing edge simply prevents a candidate tour from being feasible.
+
+\subsection{TSP-DEC is in NP}
+
+We now show that TSP-DEC belongs to the class NP. A certificate for a YES instance is a sequence $(v_0, v_1, \ldots, v_{|V|-1})$ containing all vertices exactly once. A verifier can check in polynomial time that: (1) the sequence is a permutation of $V$; (2) every consecutive pair of vertices $(v_i, v_{(i+1)})$ is connected by an edge, including the closing edge $(v_{|V|-1}, v_0)$; and (3) the sum of the weights of these edges is at most $K$. Each of these steps can be performed in $O(|V|)$ time given an efficient adjacency or hash-based representation, so the verification runs in time polynomial in the input size. Therefore, TSP-DEC $\in$ NP.
 
 \subsection{Reduction from Hamiltonian Cycle}
 
-To demonstrate that TSP is NP-hard, we use the polynomial reduction technique from the Hamiltonian Cycle (HC) problem, which is already 
-known to be NP-complete.
+To establish NP-Hardness, we provide a polynomial-time reduction from the Hamiltonian Cycle problem (HC), which is a classical NP-Complete problem. Intuitively, Hamiltonian Cycle asks for the existence of a tour that visits each vertex exactly once, without optimizing a cost; we will encode this existence question into a TSP instance by assigning low costs to edges present in the original graph and higher costs to edges that are absent.
 
-Let $G = (V, E)$ be an unweighted graph for which we wish to determine if a Hamiltonian cycle exists. We construct a complete weighted 
-graph $G' = (V, E')$ for TSP as follows:
+\textbf{Hamiltonian Cycle (HC).} Given an undirected graph $H = (V, F)$, decide whether there exists a cycle that visits every vertex exactly once. Such a cycle, if it exists, is called a Hamiltonian cycle.
 
-\begin{itemize}
-    \item For each edge $(u, v) \in E$, we set the cost $w(u, v) = 1$.
-    \item For each pair of nodes $(u, v) \notin E$, we set a very large cost, $w(u, v) = k$, where $k > |V|$.
-\end{itemize}
+\subsubsection{Construction of the Reduction}
 
-Argument: If a Hamiltonian cycle exists in the original graph $G$, then in the constructed TSP graph $G'$, the minimum cost of a tour 
-will be exactly $|V|$. If no Hamiltonian cycle exists in $G$, any tour in $G'$ must include at least one edge of cost $k$, so the total 
-cost will be strictly greater than $|V|$.
+Let $H = (V, F)$ be an arbitrary instance of HC and let $n = |V|$. From this instance we construct an instance of TSP-DEC as follows. We define a complete graph $G' = (V, E')$ on the same vertex set $V$, where $E'$ contains every unordered pair of distinct vertices. We then define a cost function $c$ on $E'$ according to whether the corresponding edge exists in $H$.
 
-Thus, if we had a polynomial-time algorithm to find the minimum cost in TSP, we could automatically decide the existence of a 
-Hamiltonian Cycle in $G$, which demonstrates that TSP is at least as hard as any problem in the NP class.
+For any two distinct vertices $u, v \in V$:
+\[
+c(u, v) = \begin{cases}
+1 & \text{if } (u, v) \in F, \\
+2 & \text{otherwise.}
+\end{cases}
+\]
 
-\subsection{Consequences on Algorithms}
+Finally, we set the threshold $K = n$. The constructed instance of TSP-DEC is therefore the triple $(G', c, K)$. This construction is well-defined since $G'$ is complete and every potential step in a tour has an associated cost.
 
-This classification justifies the use of three different approaches in this report:
+\subsection{Correctness of the Reduction}
 
-\begin{enumerate}
-    \item \textbf{Brute Force:} Exhaustive search ($O(n!)$), guaranteed to be optimal but practical only for $n \le 13$.
-    \item \textbf{Held-Karp:} Dynamic programming ($O(n^2 \cdot 2^n)$), which exponentially improves execution time but remains memory-limited.
-    \item \textbf{Greedy:} Polynomial-time heuristic ($O(n^2)$), which provides a solution quickly but without the guarantee of optimality 
-    or even success in sparse graphs.
-\end{enumerate}
+Next we prove that this reduction is correct, namely that $H$ has a Hamiltonian cycle if and only if $(G', c, K)$ is a YES instance of TSP-DEC. This establishes a polynomial-time many-one reduction HC $\le_p$ TSP-DEC.
+
+\textbf{($\Rightarrow$)} Assume that the graph $H$ contains a Hamiltonian cycle. Then there exists a cyclic ordering of the vertices such that every consecutive pair of vertices along the cycle corresponds to an edge in $F$. Consider the same vertex ordering as a tour in $G'$. Because each used edge is also in $F$, every edge in this tour has cost 1 by construction. A Hamiltonian cycle on $n$ vertices uses exactly $n$ edges, hence the total cost of the tour is $n$, which is equal to $K$. Therefore, there exists a TSP tour of cost at most $K$, and the constructed TSP-DEC instance is answered YES.
+
+\textbf{($\Leftarrow$)} Conversely, assume that the constructed TSP-DEC instance is answered YES. Then there exists a Hamiltonian tour in $G'$ with total cost at most $K = n$. Any Hamiltonian tour over $n$ vertices necessarily contains exactly $n$ edges (including the edge returning to the starting vertex). Since each edge has cost either 1 or 2, the minimum possible total cost of any such tour is $n$, and this lower bound is achieved only if every used edge has cost 1. If the tour contained at least one edge of cost 2, then the total cost would be at least $(n-1) \cdot 1 + 2 = n + 1$, contradicting the condition that the cost is at most $n$. Therefore, all edges in the tour must have cost 1, meaning that each of those edges corresponds to an edge in $F$. Hence, the same cyclic ordering defines a Hamiltonian cycle in the original graph $H$.
+
+We have shown the equivalence between the existence of a Hamiltonian cycle in $H$ and the existence of a TSP tour in $G'$ of total cost at most $n$. Therefore, HC reduces to TSP-DEC.
+
+\subsection{Polynomial-Time Complexity of the Reduction}
+
+It remains to argue that the reduction is polynomial-time. Constructing the complete graph $G'$ and assigning costs requires examining all pairs of vertices. This can be done in $O(n^2)$ time, and the size of the produced instance is polynomial in $n$. Thus, the reduction runs in polynomial time.
+
+\subsection{Conclusion}
+
+Since HC is NP-Complete, HC $\le_p$ TSP-DEC, and TSP-DEC $\in$ NP, it follows that TSP-DEC is NP-Complete. As a consequence, the optimization version of the Traveling Salesman Problem (finding the minimum-cost tour) is NP-Hard. This implies that, unless $P = NP$, there is no polynomial-time algorithm that solves all TSP instances optimally.
+
+From a practical point of view, this motivates the comparative study performed in this project: exact methods guarantee correctness but become infeasible for larger inputs, whereas heuristics and approximation strategies can produce high-quality solutions using reasonable time and memory resources.
