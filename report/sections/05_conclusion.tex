@@ -1,1 +1,6 @@
-hello from conclusion
+\section{Conclusions}
+\label{sec:conclusions}
+
+In this project we analyzed the Traveling Salesman Problem (TSP) and compared three representative solution strategies: brute-force enumeration, Held–Karp dynamic programming, and the Nearest Neighbor greedy heuristic. The experimental evaluation confirms the expected trade-off between optimality guarantees and computational resources. Brute force provides correct results but becomes infeasible even for relatively small instances, while Held–Karp significantly extends the range of solvable inputs, at the cost of exponential time and memory. In contrast, Nearest Neighbor scales well and produces solutions quickly, but the quality of the obtained tours can vary and is not guaranteed.
+
+In practice, we would approach TSP by first selecting an exact algorithm (Held–Karp) for small and medium-sized instances where optimality is required, and switching to heuristics for larger graphs where an exact solution is too costly. A reasonable strategy is to use a fast heuristic to obtain an initial tour and then invest additional resources in improvement steps when higher accuracy is needed. Overall, the choice of method depends on the instance size, graph density, and the acceptable compromise between runtime and solution quality.
