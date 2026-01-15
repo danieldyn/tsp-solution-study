@@ -1,35 +1,67 @@
-\section{Description of Implemented Algorithms}
-\label{sec:algoritms}
+\section{Algorithm Presentation}
+\label{sec:algorithms}
 
-In this section, we detail the implementation of the three algorithms used in the comparative study, highlighting how they manage 
-particular cases (sparse graphs) and memory constraints.
+In this section we describe the main algorithms implemented for the Traveling Salesman Problem (TSP) and discuss the trade-offs between solution quality, execution time, and memory usage. The input is an undirected weighted graph, which may be incomplete; therefore, some instances may have no Hamiltonian tour. In our implementation, missing edges are represented by a sufficiently large value (denoted as \texttt{INF}), and the algorithms treat such edges as invalid transitions.
 
-\subsection{Brute Force (Exhaustive Search)}
-The implementation uses the \texttt{std::next\_permutation} function from the C++ standard library to systematically generate all possible routes.
+We selected three complementary approaches. The first one is a brute-force enumeration method, which always produces an optimal result but is only feasible for very small instances. The second one is Held–Karp dynamic programming, an exact algorithm that is substantially faster than brute force but still exponential. The third approach is a greedy heuristic (Nearest Neighbor), which provides fast solutions and scales well, but may be far from optimal.
 
-\begin{itemize}
-    \item \textbf{Workflow:} The algorithm fixes node $0$ as the starting point and generates all permutations of the remaining $n-1$ nodes.
-    \item \textbf{Error Handling:} To prevent \textit{overflow} errors, we used a \texttt{SAFE\_INT} constant. If an edge is missing or 
-    the path is invalid, the cost is set to this value, and the sum is not incremented beyond the limit.
-    \item \textbf{Complexity:} $O(n!)$, being limited by the total number of permutations.
-\end{itemize}
+\subsection{Brute Force Enumeration}
 
-\subsection{Held-Karp (Dynamic Programming and Bitmasking)}
-The Held-Karp algorithm represents a significant optimization, reducing the search space by memoizing partial results.
+The brute-force approach solves TSP by explicitly enumerating all possible orders in which the cities can be visited. To remove symmetric duplicates and simplify the search, the starting city is fixed to vertex 0. The algorithm then generates all permutations of the remaining $n - 1$ vertices and computes the total tour cost for each permutation by summing consecutive edges and the final return edge to the starting city.
 
-\begin{itemize}
-    \item \textbf{Data Structures:} We used a DP table of type \texttt{std::vector<std::vector<int>>} with size $n \times 2^n$. 
-    \item \textbf{Bitmasking:} The state of subproblems is represented by an integer (\texttt{mask}), where the $i$-th bit is 
-    $1$ if city $i$ has been visited and $0$ otherwise.
-    \item \textbf{Recursion:} The \texttt{totalCost} function recursively calculates the minimum path, checking at each step if the 
-    remaining path is valid (\texttt{remaining < SAFE\_INT}) before updating the local optimum.
-\end{itemize}
+Because our input graph may be incomplete, some permutations do not correspond to valid tours. During the cost computation, if a missing edge is detected (cost $\ge$ \texttt{INF}), the current permutation is discarded immediately. This pruning does not change the worst-case complexity, but it avoids unnecessary work on instances where many edges are absent.
 
-\subsection{Greedy (Nearest Neighbor)}
-It is the fastest algorithm implemented, featuring a constructive approach based on local choices.
+The brute-force method always returns the optimal solution whenever a Hamiltonian tour exists, since it checks every candidate tour. However, its factorial time complexity makes it impractical beyond small values of $n$.
 
-\begin{itemize}
-    \item \textbf{Logic:} At each step, the algorithm searches the adjacency matrix for the nearest unvisited neighbor of the current city.
-    \item \textbf{Structural Failure (Dead End):} The implemented code explicitly handles the case where there are no edges to unvisited cities. In this situation, the algorithm returns \texttt{SAFE\_INT}, signaling the impossibility of completing the tour (a fact confirmed by the results in Table \ref{tab:accuracy}).
-    \item \textbf{Complexity:} $O(n^2)$, due to the two nested loops required to visit $n$ cities and search for the minimum neighbor.
-\end{itemize}
+\textbf{Time complexity.} Since the algorithm enumerates $(n - 1)!$ permutations and evaluates each in $O(n)$, the time complexity is $O(n \cdot (n - 1)!) = O(n!)$.
+
+\textbf{Space complexity.} The algorithm stores the current permutation and a few auxiliary variables, requiring $O(n)$ memory.
+
+\subsection{Held–Karp Dynamic Programming}
+
+Held–Karp is an exact dynamic programming algorithm for TSP based on the principle of optimality. The key idea is to store the minimum cost to reach a given city after visiting a specific subset of cities. We represent a subset of visited vertices with a bitmask, where the $i$-th bit indicates whether vertex $i$ has already been included in the partial tour.
+
+More formally, we define $\texttt{dp}[\textit{curr}][\textit{mask}]$ as the minimum cost to start from vertex 0, visit exactly the set of vertices encoded by \textit{mask}, and end in vertex \textit{curr}. The recursion explores transitions from \textit{curr} to any unvisited vertex $i$ (i.e., those with bit $i$ unset in \textit{mask}), and adds the edge cost $c(\textit{curr}, i)$ when that edge exists. Missing edges (\texttt{INF}) are ignored, ensuring that the algorithm only considers feasible moves.
+
+The base case occurs when all vertices are visited ($\textit{mask} = 2^n - 1$), in which case the remaining cost is the cost of returning to the starting vertex 0. If the return edge does not exist, the value is treated as \texttt{INF}, correctly marking the current partial tour as invalid.
+
+Held–Karp always finds an optimal tour if one exists, and it is significantly faster than brute force due to the reuse of subproblem solutions. Nevertheless, it remains exponential and is mainly suitable for moderate values of $n$.
+
+\textbf{Time complexity.} There are $n$ possible current vertices and $2^n$ possible masks. Each state may try up to $n$ transitions, so the overall time is $O(n^2 \cdot 2^n)$.
+
+\textbf{Space complexity.} The dp table stores $n \cdot 2^n$ values, thus requiring $O(n \cdot 2^n)$ memory.
+
+\subsection{Greedy Heuristic (Nearest Neighbor)}
+
+The Nearest Neighbor heuristic constructs a tour incrementally. Starting from vertex 0, at each step it selects the closest unvisited vertex reachable from the current city (i.e., the minimum-cost outgoing edge among unvisited candidates). The chosen vertex becomes the new current city, and the procedure repeats until all vertices are visited. Finally, the algorithm attempts to return to the starting city to complete the cycle.
+
+This heuristic is simple and efficient, which makes it an attractive baseline when exact computation is too expensive. However, it is also a myopic strategy: by making locally optimal choices, it may create a tour that looks good in early steps but forces expensive edges later. In graphs with missing edges, the heuristic may also reach a dead end where no unvisited neighbor is reachable; in that case, the algorithm reports failure (\texttt{INF}), indicating that it did not construct a valid Hamiltonian tour.
+
+\textbf{Time complexity.} For each of the $n - 1$ selection steps, the algorithm scans all vertices to find the nearest unvisited candidate, leading to $O(n^2)$ time.
+
+\textbf{Space complexity.} The visited array and a few variables require $O(n)$ memory.
+
+\subsection{Comparison of the Considered Approaches}
+
+The three algorithms cover different regions of the accuracy–efficiency spectrum. Brute force is conceptually simple and guarantees optimality, but it grows too quickly to be practical. Held–Karp is also exact, and it enables optimal computation for larger instances than brute force, at the cost of exponential memory consumption. The greedy heuristic runs quickly even for large inputs and is easy to implement, but its solution quality is not guaranteed and may vary significantly across different instances.
+
+Table~\ref{tab:algorithm_comparison} summarizes the main characteristics of the analyzed methods. In addition to asymptotic complexities, we highlight typical strengths and limitations relevant for the experimental evaluation performed in this project.
+
+\begin{table}[h]
+\centering
+\caption{Summary of the implemented algorithms for TSP.}
+\label{tab:algorithm_comparison}
+\begin{tabular}{|p{2.5cm}|p{1.5cm}|p{2cm}|p{2cm}|p{5cm}|}
+\hline
+\textbf{Algorithm} & \textbf{Type} & \textbf{Time Complexity} & \textbf{Space Complexity} & \textbf{Main Notes} \\
+\hline
+Brute Force & Exact & $O(n!)$ & $O(n)$ & Always optimal; feasible only for very small $n$; naturally handles missing edges by discarding invalid tours. \\
+\hline
+Held–Karp & Exact (DP) & $O(n^2 \cdot 2^n)$ & $O(n \cdot 2^n)$ & Optimal; significantly faster than brute force; exponential memory; suitable for medium $n$. \\
+\hline
+Nearest Neighbor & Heuristic & $O(n^2)$ & $O(n)$ & Fast and scalable; no optimality guarantee; may be far from optimal or fail on sparse graphs (dead ends). \\
+\hline
+\end{tabular}
+\end{table}
+
+In the evaluation section, we use the brute-force and Held–Karp solutions as references for correctness, while the Nearest Neighbor heuristic is evaluated in terms of speed and approximation quality. Whenever an optimal solution is available within reasonable time limits, the relative error of the heuristic can be computed by comparing its tour length against the optimal tour length.
