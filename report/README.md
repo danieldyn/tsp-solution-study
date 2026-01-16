@@ -12,4 +12,9 @@ In the `report` directory:
     make
 ```
 
-This will create the file `report.pdf`, containing the whole content.
+This will create the file `report.pdf`, containing the whole content, alongside necessary auxiliary files which are to be ignored.
+If you want to clean up the `report` directory back to its state before compiling:
+
+```bash
+    make distclean
+```

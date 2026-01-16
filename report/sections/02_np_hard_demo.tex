@@ -13,7 +13,7 @@ It is important to note that the input graphs considered in the assignment are n
 
 \subsection{TSP-DEC is in NP}
 
-We now show that TSP-DEC belongs to the class NP. A certificate for a YES instance is a sequence $(v_0, v_1, \ldots, v_{|V|-1})$ containing all vertices exactly once. A verifier can check in polynomial time that: (1) the sequence is a permutation of $V$; (2) every consecutive pair of vertices $(v_i, v_{(i+1)})$ is connected by an edge, including the closing edge $(v_{|V|-1}, v_0)$; and (3) the sum of the weights of these edges is at most $K$. Each of these steps can be performed in $O(|V|)$ time given an efficient adjacency or hash-based representation, so the verification runs in time polynomial in the input size. Therefore, TSP-DEC $\in$ NP.
+We now show that TSP-DEC belongs to the class NP. A certificate for a YES instance is a sequence $(v_0, v_1, \ldots, v_{|V|-1})$ containing all vertices exactly once. A verifier can check in polynomial time that: (1) the sequence is a permutation of $V$; (2) every consecutive pair of vertices $(v_i, v_{i+1})$ is connected by an edge, including the closing edge $(v_{|V|-1}, v_0)$; and (3) the sum of the weights of these edges is at most $K$. Each of these steps can be performed in $O(|V|)$ time given an efficient adjacency or hash-based representation, so the verification runs in time polynomial in the input size. Therefore, TSP-DEC $\in$ NP.
 
 \subsection{Reduction from Hamiltonian Cycle}
 

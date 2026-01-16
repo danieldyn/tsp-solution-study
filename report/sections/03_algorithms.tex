@@ -3,7 +3,7 @@
 
 In this section we describe the main algorithms implemented for the Traveling Salesman Problem (TSP) and discuss the trade-offs between solution quality, execution time, and memory usage. The input is an undirected weighted graph, which may be incomplete; therefore, some instances may have no Hamiltonian tour. In our implementation, missing edges are represented by a sufficiently large value (denoted as \texttt{INF}), and the algorithms treat such edges as invalid transitions.
 
-We selected three complementary approaches. The first one is a brute-force enumeration method, which always produces an optimal result but is only feasible for very small instances. The second one is Held–Karp dynamic programming, an exact algorithm that is substantially faster than brute force but still exponential. The third approach is a greedy heuristic (Nearest Neighbor), which provides fast solutions and scales well, but may be far from optimal.
+We selected three complementary approaches. The first one is a brute-force enumeration method, which always produces an optimal result but is only feasible for very small instances. The second one is Held-Karp dynamic programming, an exact algorithm that is substantially faster than brute force but still exponential. The third approach is a greedy heuristic (Nearest Neighbor), which provides fast solutions and scales well, but may be far from optimal.
 
 \subsection{Brute Force Enumeration}
 
@@ -17,15 +17,15 @@ The brute-force method always returns the optimal solution whenever a Hamiltonia
 
 \textbf{Space complexity.} The algorithm stores the current permutation and a few auxiliary variables, requiring $O(n)$ memory.
 
-\subsection{Held–Karp Dynamic Programming}
+\subsection{Held-Karp Dynamic Programming}
 
-Held–Karp is an exact dynamic programming algorithm for TSP based on the principle of optimality. The key idea is to store the minimum cost to reach a given city after visiting a specific subset of cities. We represent a subset of visited vertices with a bitmask, where the $i$-th bit indicates whether vertex $i$ has already been included in the partial tour.
+Held-Karp is an exact dynamic programming algorithm for TSP based on the principle of optimality. The key idea is to store the minimum cost to reach a given city after visiting a specific subset of cities. We represent a subset of visited vertices with a bitmask, where the $i$-th bit indicates whether vertex $i$ has already been included in the partial tour.
 
 More formally, we define $\texttt{dp}[\textit{curr}][\textit{mask}]$ as the minimum cost to start from vertex 0, visit exactly the set of vertices encoded by \textit{mask}, and end in vertex \textit{curr}. The recursion explores transitions from \textit{curr} to any unvisited vertex $i$ (i.e., those with bit $i$ unset in \textit{mask}), and adds the edge cost $c(\textit{curr}, i)$ when that edge exists. Missing edges (\texttt{INF}) are ignored, ensuring that the algorithm only considers feasible moves.
 
 The base case occurs when all vertices are visited ($\textit{mask} = 2^n - 1$), in which case the remaining cost is the cost of returning to the starting vertex 0. If the return edge does not exist, the value is treated as \texttt{INF}, correctly marking the current partial tour as invalid.
 
-Held–Karp always finds an optimal tour if one exists, and it is significantly faster than brute force due to the reuse of subproblem solutions. Nevertheless, it remains exponential and is mainly suitable for moderate values of $n$.
+Held-Karp always finds an optimal tour if one exists, and it is significantly faster than brute force due to the reuse of subproblem solutions. Nevertheless, it remains exponential and is mainly suitable for moderate values of $n$.
 
 \textbf{Time complexity.} There are $n$ possible current vertices and $2^n$ possible masks. Each state may try up to $n$ transitions, so the overall time is $O(n^2 \cdot 2^n)$.
 
@@ -43,11 +43,11 @@ This heuristic is simple and efficient, which makes it an attractive baseline wh
 
 \subsection{Comparison of the Considered Approaches}
 
-The three algorithms cover different regions of the accuracy–efficiency spectrum. Brute force is conceptually simple and guarantees optimality, but it grows too quickly to be practical. Held–Karp is also exact, and it enables optimal computation for larger instances than brute force, at the cost of exponential memory consumption. The greedy heuristic runs quickly even for large inputs and is easy to implement, but its solution quality is not guaranteed and may vary significantly across different instances.
+The three algorithms cover different regions of the accuracy-efficiency spectrum. Brute force is conceptually simple and guarantees optimality, but it grows too quickly to be practical. Held-Karp is also exact, and it enables optimal computation for larger instances than brute force, at the cost of exponential memory consumption. The greedy heuristic runs quickly even for large inputs and is easy to implement, but its solution quality is not guaranteed and may vary significantly across different instances.
 
 Table~\ref{tab:algorithm_comparison} summarizes the main characteristics of the analyzed methods. In addition to asymptotic complexities, we highlight typical strengths and limitations relevant for the experimental evaluation performed in this project.
 
-\begin{table}[h]
+\begin{table}[H]
 \centering
 \caption{Summary of the implemented algorithms for TSP.}
 \label{tab:algorithm_comparison}
@@ -57,11 +57,11 @@ Table~\ref{tab:algorithm_comparison} summarizes the main characteristics of the 
 \hline
 Brute Force & Exact & $O(n!)$ & $O(n)$ & Always optimal; feasible only for very small $n$; naturally handles missing edges by discarding invalid tours. \\
 \hline
-Held–Karp & Exact (DP) & $O(n^2 \cdot 2^n)$ & $O(n \cdot 2^n)$ & Optimal; significantly faster than brute force; exponential memory; suitable for medium $n$. \\
+Held-Karp & Exact (DP) & $O(n^2 \cdot 2^n)$ & $O(n \cdot 2^n)$ & Optimal; significantly faster than brute force; exponential memory; suitable for medium $n$. \\
 \hline
 Nearest Neighbor & Heuristic & $O(n^2)$ & $O(n)$ & Fast and scalable; no optimality guarantee; may be far from optimal or fail on sparse graphs (dead ends). \\
 \hline
 \end{tabular}
 \end{table}
 
-In the evaluation section, we use the brute-force and Held–Karp solutions as references for correctness, while the Nearest Neighbor heuristic is evaluated in terms of speed and approximation quality. Whenever an optimal solution is available within reasonable time limits, the relative error of the heuristic can be computed by comparing its tour length against the optimal tour length.
+In the evaluation section, we use the brute-force and Held-Karp solutions as references for correctness, while the Nearest Neighbor heuristic is evaluated in terms of speed and approximation quality. Whenever an optimal solution is available within reasonable time limits, the relative error of the heuristic can be computed by comparing its tour length against the optimal tour length.

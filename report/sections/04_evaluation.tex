@@ -1,8 +1,9 @@
 \section{Evaluation}
 \label{sec:evaluation}
 
-This chapter presents the testing methodology, the hardware specifications used, and the comparative performance analysis of the three 
-implemented algorithms: Brute Force, Greedy (Nearest Neighbor), and Held-Karp.
+For the three previously described algorithms, we performed a complete analysis of both solution accuracy and time performance. In order to 
+achieve this, we constructed a diverse set of tests which covers different sizes and densities that input graphs for TSP might have. Since 
+all graphs that are meant to have an answer to TSP are complete and weighted at the same time, this narrows down the edge cases significantly.
 
 %% 1. Construction of the Test Set %%
 \subsection{Construction of the Test Set}
@@ -34,7 +35,7 @@ quickly reaches impractical runtime, another that exhibits significant growth wi
 
 \begin{table}[H]
     \centering
-    \caption{Execution times measured on various tests.}
+    \caption{Example of execution times measured on one run of all tests.}
     \label{tab:benchmark_summary}
     \begin{tabular}{|l|c|r|r|r|}
         \hline
@@ -68,7 +69,7 @@ We distinguish three situations that can occur:
 
 \begin{table}[H]
     \centering
-    \caption{Comparison of costs and relative errors.} 
+    \caption{Comparison of costs and relative errors on one run of all tests.} 
     \label{tab:accuracy}
     \begin{tabular}{|l|r|r|r|l|}
         \hline
@@ -78,11 +79,11 @@ We distinguish three situations that can occur:
         Test 02 & 3,077,161 & 3,123,942 & 1.52\% & Good \\
         Test 04 & 1,501,515 & 1,665,081 & 10.89\% & Average \\
         Test 22 & 1,645,079 & 2,456,555 & 49.33\% & Poor \\
-        Test 01 & 1,273,944 & 2,280,130 & \textbf{78.98\%} & Very Poor \\
+        Test 01 & 1,273,944 & 2,280,130 & 78.98\% & Very Poor \\
         \hline
-        Test 05 & 3,411,545 & $\infty$ (INF) & N/A & \textbf{Greedy Failed} \\
-        Test 11 & 5,050,651 & $\infty$ (INF) & N/A & \textbf{Greedy Failed} \\
-        Test 24 & 2,721,940 & $\infty$ (INF) & N/A & \textbf{Greedy Failed} \\
+        Test 05 & 3,411,545 & $\infty$ (INF) & N/A & Greedy Failed \\
+        Test 11 & 5,050,651 & $\infty$ (INF) & N/A & Greedy Failed \\
+        Test 24 & 2,721,940 & $\infty$ (INF) & N/A & Greedy Failed \\
         \hline
         Test 06 & $\infty$ (INF) & $\infty$ (INF) & N/A & Disconnected Graph \\
         \hline
@@ -91,20 +92,12 @@ We distinguish three situations that can occur:
 
 From the interpretations above, we can distinguish several reasons why the discussed implementations might fail, for various situations:
 
-\begin{table}[H]
-    \centering
-    \caption{Failure Mode Analysis}
-    \label{tab:failures}
-    \begin{tabular}{|l|l|l|l|}
-        \hline
-        \textbf{Algorithm} & \textbf{Limit Reached} & \textbf{Cause} & \textbf{Impact} \\
-        \hline
-        Brute Force & $N \ge 13$ & Complexity $O(N!)$ & Timeout (Time) \\
-        Held-Karp   & $N > 22$ (est.) & Memory $O(N 2^N)$ & Out of Memory \\
-        Greedy      & Random & Graph Topology & \textbf{Solution Failure (Deadlock)} \\
-        \hline
-    \end{tabular}
-\end{table}
+\begin{itemize}
+    \item \textbf{Brute Force:} Reaches its practical limit at $N \ge 13$. The failure is caused by the factorial time complexity ($O(N!)$), which inevitably leads to a \textit{Timeout}.
+    \item \textbf{Held-Karp:} We estimate the limit to be around $N > 22$. Unlike Brute Force, the bottleneck here is usually \textit{Memory} ($O(N \cdot 2^N)$) rather than raw CPU time.  
+    \item \textbf{Greedy:} Fails unpredictably depending on the \textit{Graph Topology}. Because the heuristic has no backtracking mechanism, it can get stuck in a node with no unvisited neighbours in sparse graphs, 
+    resulting in a complete solution failure (Deadlock).
+\end{itemize}
 
 \subsubsection{Graphical Analysis}
 % FIXME: Page layout with all images
