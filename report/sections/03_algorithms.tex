@@ -1,7 +1,7 @@
 \section{Algorithm Presentation}
 \label{sec:algorithms}
 
-In this section we describe the main algorithms implemented for the Traveling Salesman Problem (TSP) and discuss the trade-offs between solution quality, execution time, and memory usage. The input is an undirected weighted graph, which may be incomplete; therefore, some instances may have no Hamiltonian tour. In our implementation, missing edges are represented by a sufficiently large value (denoted as \texttt{INF}), and the algorithms treat such edges as invalid transitions.
+In this section we describe the main algorithms implemented for the Traveling Salesman Problem (TSP) and discuss the trade-offs between solution quality, execution time, and memory usage \cite{cormen2009,applegate2006,gutin2002}. The input is an undirected weighted graph, which may be incomplete; therefore, some instances may have no Hamiltonian tour. In our implementation, missing edges are represented by a sufficiently large value (denoted as \texttt{INF}), and the algorithms treat such edges as invalid transitions.
 
 We selected three complementary approaches. The first one is a brute-force enumeration method, which always produces an optimal result but is only feasible for very small instances. The second one is Held–Karp dynamic programming, an exact algorithm that is substantially faster than brute force but still exponential. The third approach is a greedy heuristic (Nearest Neighbor), which provides fast solutions and scales well, but may be far from optimal.
 
@@ -19,7 +19,7 @@ The brute-force method always returns the optimal solution whenever a Hamiltonia
 
 \subsection{Held–Karp Dynamic Programming}
 
-Held–Karp is an exact dynamic programming algorithm for TSP based on the principle of optimality. The key idea is to store the minimum cost to reach a given city after visiting a specific subset of cities. We represent a subset of visited vertices with a bitmask, where the $i$-th bit indicates whether vertex $i$ has already been included in the partial tour.
+Held–Karp is an exact dynamic programming algorithm for TSP based on the principle of optimality \cite{bellman1962}. The key idea is to store the minimum cost to reach a given city after visiting a specific subset of cities. We represent a subset of visited vertices with a bitmask, where the $i$-th bit indicates whether vertex $i$ has already been included in the partial tour.
 
 More formally, we define $\texttt{dp}[\textit{curr}][\textit{mask}]$ as the minimum cost to start from vertex 0, visit exactly the set of vertices encoded by \textit{mask}, and end in vertex \textit{curr}. The recursion explores transitions from \textit{curr} to any unvisited vertex $i$ (i.e., those with bit $i$ unset in \textit{mask}), and adds the edge cost $c(\textit{curr}, i)$ when that edge exists. Missing edges (\texttt{INF}) are ignored, ensuring that the algorithm only considers feasible moves.
 
