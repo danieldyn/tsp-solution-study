@@ -13,6 +13,8 @@ From the repository's root:
 
 ## Running the Benchmark
 
+Look inside the `run_benchmark.sh` file to choose the number of benchmarking rounds before continuing.
+
 From the repository's root:
 
 - If you want the results printed to the terminal in human readable format:
