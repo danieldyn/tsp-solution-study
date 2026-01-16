@@ -17,7 +17,7 @@ We now show that TSP-DEC belongs to the class NP. A certificate for a YES instan
 
 \subsection{Reduction from Hamiltonian Cycle}
 
-To establish NP-Hardness, we provide a polynomial-time reduction from the Hamiltonian Cycle problem (HC), which is a classical NP-Complete problem. Intuitively, Hamiltonian Cycle asks for the existence of a tour that visits each vertex exactly once, without optimizing a cost; we will encode this existence question into a TSP instance by assigning low costs to edges present in the original graph and higher costs to edges that are absent.
+To establish NP-Hardness, we provide a polynomial-time reduction from the Hamiltonian Cycle problem (HC), which is a classical NP-Complete problem \cite{karp1972,garey1979}. Intuitively, Hamiltonian Cycle asks for the existence of a tour that visits each vertex exactly once, without optimizing a cost; we will encode this existence question into a TSP instance by assigning low costs to edges present in the original graph and higher costs to edges that are absent.
 
 \textbf{Hamiltonian Cycle (HC).} Given an undirected graph $H = (V, F)$, decide whether there exists a cycle that visits every vertex exactly once. Such a cycle, if it exists, is called a Hamiltonian cycle.
 
