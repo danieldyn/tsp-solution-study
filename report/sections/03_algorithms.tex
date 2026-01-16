@@ -3,7 +3,7 @@
 
 In this section we describe the main algorithms implemented for the Traveling Salesman Problem (TSP) and discuss the trade-offs between solution quality, execution time, and memory usage. The input is an undirected weighted graph, which may be incomplete; therefore, some instances may have no Hamiltonian tour. In our implementation, missing edges are represented by a sufficiently large value (denoted as \texttt{INF}), and the algorithms treat such edges as invalid transitions.
 
-We selected three complementary approaches. The first one is a brute-force enumeration method, which always produces an optimal result but is only feasible for very small instances. The second one is Held-Karp dynamic programming, an exact algorithm that is substantially faster than brute force but still exponential. The third approach is a greedy heuristic (Nearest Neighbor), which provides fast solutions and scales well, but may be far from optimal.
+We selected three complementary approaches. The first one is a brute-force enumeration method, which always produces an optimal result but is only feasible for very small instances. The second one is Held-Karp dynamic programming \cite{gfg_tsp_dp}, an exact algorithm that is substantially faster than brute force but still exponential. The third approach is a greedy heuristic (Nearest Neighbor) \cite{gfg_tsp_greedy}, which provides fast solutions and scales well, but may be far from optimal.
 
 \subsection{Brute Force Enumeration}
 
