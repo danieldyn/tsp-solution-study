@@ -1,4 +1,4 @@
-# Travlling Salesman Problem Study
+# Travelling Salesman Problem Study
 
 A study for several solutions for the Travelling Salesman Problem.
 
@@ -40,3 +40,7 @@ From the repository's root:
     ./run_check.sh > check_results.txt
     cat check_results.txt
 ```
+
+## Building the Report
+
+If you wish to see the report created based on this benchmark, enter the `report` directory and follow the instructions in the `README.md` file inside it.
